@@ -27,9 +27,7 @@ function App() {
   
 
   const handleKeyDown = (event => {
-    if(event.key === "Enter"){
-      handleSearch();
-    }
+    if(event.key === "Enter") handleSearch();
   })
 
   useEffect(()=>{
@@ -79,7 +77,7 @@ function App() {
       
       const data = weatherApi.data;
        
-      if(data && data.cod === 200){
+      if(data && +data.cod === 200){
 
         console.log(data.cod);
         
@@ -104,11 +102,11 @@ function App() {
 
   return (
     <div 
-      className='relative min-h-screen w-full bg-cover bg-center bg-no-repeat m-0' 
+      className='flex flex-col min-h-screen w-full bg-cover bg-center bg-no-repeat m-0' 
       style={{ backgroundImage: `url(${backgroundImage})` }}>
 
 
-      <div className='absolute top-4 left-4 bg-black/40 text-white rounded-lg px-21 py-4 flex flex-col items-start space-y-2'>
+      <div className='absolute top-4 left-4 bg-black/40 text-white rounded-lg px-20 py-4 flex flex-col items-start space-y-2'>
         <header className= 'flex items-center space-x-4 text-4xl font-semibold'>
         <h1 className='text-white text-xl font-semibold'>YC Weather</h1>
         <img src='https://upload.wikimedia.org/wikipedia/commons/a/a7/React-icon.svg' alt='React Logo' className='react-logo w-12 h-12'/>
@@ -116,10 +114,10 @@ function App() {
         <p className='text-sm text-white/80'>Quick local forecasts</p>
       </div>
       
-      <div className='flex flex-col items-center'>
+      <div className='flex flex-col items-center flex-grow'>
         
          <div className='relative w-full max-w-md mt-40 search-container'>
-          <span className='flex-items-center absolute left-3 py-4 top-1/2-translate-y-1/2 text-gray-500'><FaSearch/></span>
+          <span className='flex items-center absolute left-3 py-4 top-1/2 -translate-y-1/2 text-gray-500'><FaSearch/></span>
             <input 
               type='text' 
               className='w-full pl-10 pr-4 py-3 rounded-lg shadow border border-white/30 bg-white/90 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400' 
@@ -127,17 +125,17 @@ function App() {
               value={city} 
               onChange={(event) => setCity(event.target.value)} 
               onKeyDown={handleKeyDown}
-              onFocus={() => setShowDropdown(!showDropdown)} // show dropdown
-              onClick={() => setShowDropdown(!showDropdown)}
+              onFocus={() => setShowDropdown(true)} // show dropdown
+              onClick={() => setShowDropdown(true)}
             />
 
             {/* Search History Dropdown (mobile) */}
-    {showDropdown && searchHistory.length > 0 && (
-      <div
-        className='absolute top-full left-0 w-full bg-white/90 rounded-b-lg shadow-md mt-1 overflow-hidden md:hidden transition-all duration-300'
-      >
-        <ul className='divide-y divide-gray-200'>
-          {searchHistory.map((item, i) => (
+          {showDropdown && searchHistory.length > 0 && (
+         <div
+            className='absolute top-full left-0 w-full bg-white/90 rounded-b-lg shadow-md mt-1 overflow-hidden md:hidden transition-all duration-300'
+            >
+          <ul className='divide-y divide-gray-200'>
+            {searchHistory.map((item, i) => (
             <li
               key={i}
               className='px-4 py-2 hover:bg-blue-100 text-blue-700 transition cursor-pointer'
@@ -166,56 +164,54 @@ function App() {
         >
           Clear History
         </button>
-      </div>
-    )}
-          </div>
+        </div>
+     )}
+    </div>
 
           <div className='h-4 mt-1 flex items-center justify-center'>
             {error && (<p className='text-sm text-red-500 bg-white/60 px-1 py-1 rounded'>{error}</p>)}
           </div>
 
+          <Weather weather={weather}/>
       </div> 
 
-
-  {/* Desktop version (floating sidebar) */}
-  {searchHistory.length > 0 && (
-    <div className='hidden md:absolute md:top-32 md:right-8 md:block w-64 bg-white/80 rounded-xl shadow p-4'>
-      <h4 className='font-semibold text-gray-700 mb-4'>Recent locations</h4>
-      <ul className='space-y-2'>
-        {searchHistory.map((item, i) => (
+      {/* Desktop version (floating sidebar) */}
+      {searchHistory.length > 0 && (
+      <div className='hidden md:absolute md:top-32 md:right-8 md:block w-64 bg-white/80 rounded-xl shadow p-4'>
+        <h4 className='font-semibold text-gray-700 mb-4'>Recent locations</h4>
+        <ul className='space-y-2'>
+         {searchHistory.map((item, i) => (
           <li
             key={i}
             className='w-full px-4 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition font-medium shadow-sm'
           >
             <button onClick={() => handleSearch(item)}>{item}</button>
           </li>
-        ))}
-      </ul>
-      <button
-        className='text-red-500 hover:text-red-600 mt-4'
-        onClick={() => {
+          ))}
+        </ul>
+        <button
+          className='text-red-500 hover:text-red-600 mt-4'
+          onClick={() => {
           setSearchHistory([]);
           localStorage.removeItem("searchHistory");
           setWeather(null);
           setCity("");
-        }}
-      >
+          }}
+        >
         Clear History
       </button>
-    </div>
-  )}
+      </div>
+     )}
 
 
-      
-      <Weather weather={weather}/>
-
-      <footer className='fixed bottom-0 left-0 w-full text-center py-8 bg-black/40 text-white mt-10'>
+    
+      <footer className='text-center py-8 bg-black/40 text-white mt-10'>
       <p className='text-sm'>
         @ {new Date().getFullYear()} My Weather App - Built using React & Tailwind
       </p>
-    </footer>
+      </footer>
 
-    </div>
+  </div>
   )
 }
 
