@@ -14,6 +14,7 @@ function App() {
   const[searchHistory, setSearchHistory] = useState([])
   const[error, setError] = useState(null)
   const [backgroundImage, setBackgroundImage] = useState(defaultWeatherBg);
+  const [showDropdown, setShowDropdown] = useState(false);
 
   const weatherBackground = {
     Default: defaultWeatherBg,
@@ -40,6 +41,22 @@ function App() {
       return() => clearTimeout(timer);
     }
     },[error]);
+
+    useEffect(() => {
+      const handleClickOutside = (event) => {
+        if (!event.target.closest('.search-container')) {
+          setShowDropdown(false);
+        }
+      };
+    
+      document.addEventListener('click', handleClickOutside);
+    
+      // cleanup when component unmounts
+      return () => {
+        document.removeEventListener('click', handleClickOutside);
+      };
+    }, []);
+    
 
 
   const handleSearch = async(term) => {
@@ -101,7 +118,7 @@ function App() {
       
       <div className='flex flex-col items-center'>
         
-         <div className='relative w-full max-w-md mt-40'>
+         <div className='relative w-full max-w-md mt-40 search-container'>
           <span className='flex-items-center absolute left-3 py-4 top-1/2-translate-y-1/2 text-gray-500'><FaSearch/></span>
             <input 
               type='text' 
@@ -110,7 +127,47 @@ function App() {
               value={city} 
               onChange={(event) => setCity(event.target.value)} 
               onKeyDown={handleKeyDown}
+              onFocus={() => setShowDropdown(!showDropdown)} // show dropdown
+              onClick={() => setShowDropdown(!showDropdown)}
             />
+
+            {/* Search History Dropdown (mobile) */}
+    {showDropdown && searchHistory.length > 0 && (
+      <div
+        className='absolute top-full left-0 w-full bg-white/90 rounded-b-lg shadow-md mt-1 overflow-hidden md:hidden transition-all duration-300'
+      >
+        <ul className='divide-y divide-gray-200'>
+          {searchHistory.map((item, i) => (
+            <li
+              key={i}
+              className='px-4 py-2 hover:bg-blue-100 text-blue-700 transition cursor-pointer'
+            >
+              <button
+                className='w-full text-left'
+                onClick={() =>  {handleSearch(item);
+                  setShowDropdown(false)
+                }}
+                
+              >
+                {item}
+              </button>
+            </li>
+          ))}
+        </ul>
+        <button
+          className='w-full text-red-500 hover:text-red-600 py-2 text-sm bg-gray-100'
+          onClick={() => {
+            setSearchHistory([]);
+            localStorage.removeItem("searchHistory");
+            setWeather(null);
+            setCity("");
+            setShowDropdown(false);
+          }}
+        >
+          Clear History
+        </button>
+      </div>
+    )}
           </div>
 
           <div className='h-4 mt-1 flex items-center justify-center'>
@@ -120,22 +177,23 @@ function App() {
       </div> 
 
 
-      {searchHistory.length > 0 && (
-    <div className='relative md:absolute md:top-32 md:right-8 w-full md:w-64 bg-white/80 rounded-xl shadow p-4 mt-6 md:mt-0'>
+  {/* Desktop version (floating sidebar) */}
+  {searchHistory.length > 0 && (
+    <div className='hidden md:absolute md:top-32 md:right-8 md:block w-64 bg-white/80 rounded-xl shadow p-4'>
       <h4 className='font-semibold text-gray-700 mb-4'>Recent locations</h4>
       <ul className='space-y-2'>
         {searchHistory.map((item, i) => (
-          <li 
+          <li
             key={i}
-            className='w-full px-4 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 active:bg-blue-300 transition font-medium shadow-sm'
+            className='w-full px-4 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition font-medium shadow-sm'
           >
             <button onClick={() => handleSearch(item)}>{item}</button>
           </li>
         ))}
       </ul>
-      <button 
-        className='text-red-500 hover:text-red-600 mt-4' 
-        onClick={() => { 
+      <button
+        className='text-red-500 hover:text-red-600 mt-4'
+        onClick={() => {
           setSearchHistory([]);
           localStorage.removeItem("searchHistory");
           setWeather(null);
@@ -145,15 +203,15 @@ function App() {
         Clear History
       </button>
     </div>
+  )}
+
 
       
-      
-      )}
       <Weather weather={weather}/>
 
       <footer className='fixed bottom-0 left-0 w-full text-center py-8 bg-black/40 text-white mt-10'>
       <p className='text-sm'>
-        @ {new Date().getFullYear()} My Weather App - Buit using React & Tailwind
+        @ {new Date().getFullYear()} My Weather App - Built using React & Tailwind
       </p>
     </footer>
 
