@@ -110,6 +110,9 @@ function App() {
       className="flex flex-col min-h-screen w-full bg-cover bg-center bg-no-repeat m-0"
       style={{ backgroundImage: `url(${backgroundImage})` }}
     >
+      <div className="w-full bg-black/60 text-white text-center py-18">
+         
+
       <div className="absolute top-4 left-4 bg-black/40 text-white rounded-lg px-20 py-4 flex flex-col items-start space-y-2">
         <header className="flex items-center space-x-4 text-4xl font-semibold">
           <h1 className="text-white text-xl font-semibold">YC Weather</h1>
@@ -122,8 +125,10 @@ function App() {
         <p className="text-sm text-white/80">Quick local forecasts</p>
       </div>
 
+      </div>
+
       <div className="flex flex-col items-center flex-grow">
-        <div className="relative w-full max-w-md mt-40 search-container">
+        <div className="relative w-full max-w-md mt-20 search-container">
           <span className="flex items-center absolute left-3 py-4 top-1/2 -translate-y-1/2 text-gray-500">
             <FaSearch />
           </span>
@@ -188,7 +193,7 @@ function App() {
 
       {/* Desktop version (floating sidebar) */}
       {searchHistory.length > 0 && (
-        <div className="hidden md:absolute md:top-32 md:right-8 md:block w-64 bg-white/80 rounded-xl shadow p-4">
+        <div className="hidden md:absolute md:top-48 md:right-8 md:block w-64 bg-white/80 rounded-xl shadow p-4">
           <h4 className="font-semibold text-gray-700 mb-4">Recent locations</h4>
           <ul className="space-y-2">
             {searchHistory.map((item, i) => (
